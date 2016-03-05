@@ -222,3 +222,16 @@ exports.get_bdstoken = function(cookies, callback) {
 		show_error(e.message);
 	});
 }
+
+exports.test_cookies = function(user, callback) {
+	var options = {
+		hostname: "passport.baidu.com",
+		headers: {
+			Cookie: cookies_stringify(user.auth.cookies),
+			Referer: "https://passport.baidu.com/"
+		}
+	};
+	https.get(options, callback).on("error", function(e) {
+		console.error(e.message);
+	});
+}

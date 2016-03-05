@@ -1,4 +1,3 @@
-var fs = require("fs");
 var NodeRsa = require("node-rsa");
 var qs = require("querystring");
 var ipc = require("electron").ipcRenderer;
@@ -19,25 +18,39 @@ function add_cookie(cookie) {
 	cookies[cookie[0]] = cookies[cookie[0]].join("=");
 }
 
-if (fs.existsSync("user_data")) {
-	var data = fs.readFileSync("user_data", "utf-8");
-	try {
-		data = JSON.parse(data);
-	} catch(e) {
-		data = null;
-		console.error(e);
-	}
+var conf = globals.get("config");
+function fill_form(user_name) {
+	if (!conf.users) return false;
+	var user = conf.users[user_name];
+	if (!user) return false;
+
+	if (typeof user.name == "string")
+		if (uname.value != user.name)
+			uname.value = user.name;
+	if (typeof user.password == "string")
+		if (user.remember)
+			password.value = user.password;
+	if (typeof user.remember == "boolean")
+		remember.checked = user.remember;
+	if (typeof user.auto == "boolean")
+		auto.checked = user.auto;
+
+	var cb = remember.parentNode;
+	if (remember.checked && !cb.className.match("is-checked"))
+		cb.className += " is-checked";
+	if (!remember.checked && cb.className.match("is-checked"))
+		cb.className = cb.className.replace("is-checked", "");
+	cb = auto.parentNode;
+	if (auto.checked && !cb.className.match("is-checked"))
+		cb.className += " is-checked";
+	if (!auto.checked && cb.className.match("is-checked"))
+		cb.className = cb.className.replace("is-checked", "");
+
+	return user.auto;
 }
-if (data != null) {
-	if (typeof data.name == "string")
-		uname.value = data.name;
-	if (typeof data.password == "string")
-		if (data.remember)
-			password.value = data.password;
-	if (typeof data.remember == "boolean")
-		remember.checked = data.remember;
-	if (typeof data.auto == "boolean")
-		auto.checked = data.auto;
+if (conf.default) {
+	if (fill_form(conf.default))
+		do_login();
 }
 
 auto.addEventListener("click", function() {
@@ -47,6 +60,16 @@ auto.addEventListener("click", function() {
 		if (!cb.className.match("is-checked"))
 			cb.className += " is-checked";
 	}
+});
+uname.addEventListener("input", function() {
+	password.value = "";
+	remember.checked = false;
+	auto.checked = false;
+	var cb = remember.parentNode;
+	cb.className = cb.className.replace("is-checked", "");
+	cb = auto.parentNode;
+	cb.className = cb.className.replace("is-checked", "");
+	fill_form(uname.value);
 });
 
 function restore_login() {
@@ -67,7 +90,6 @@ function show_error(e) {
 }
 
 login.addEventListener("click", do_login);
-if (data.auto) do_login();
 function do_login() {
 	if (uname.value == "") {
 		show_error("请输入用户名");
@@ -84,6 +106,13 @@ function do_login() {
 	error.style.display = "none";
 	login.disabled = true;
 
+	if (conf.users[uname.value])
+		if (conf.users[uname.value].auth) {
+			var me = conf.users[uname.value];
+			auth.test_cookies(me, on_test_finish);
+			return ;
+		}
+
 	user_name = uname.value;
 	user_password = password.value;
 
@@ -91,6 +120,27 @@ function do_login() {
 	tokens = {};
 	login.innerHTML = "获取 BAIDUID ..."	;
 	auth.get_BAIDUID(on_get_BAIDUID);
+}
+
+function on_test_finish(res) {
+	var me = conf.users[uname.value];
+	if (res.headers["location"].indexOf("v2/?login") == -1) {
+		if (me.password == password.value) {
+			globals.set("cookies", me.auth.cookies);
+			globals.set("tokens", me.auth.tokens);
+			ipc.send("finish-login", {
+				name: uname.value,
+				password: password.value,
+				remember: remember.checked,
+				auto: auto.checked
+			});
+			restore_login();
+		} else
+			show_error("密码错误");
+	} else {
+		me.auth = false;
+		do_login();
+	}
 }
 
 ipc.on("vcode-reply", function(event, res) {
@@ -253,7 +303,12 @@ function on_get_bdstoken(res) {
 
 			globals.set("cookies", cookies);
 			globals.set("tokens", tokens);
-			ipc.send("finish-login");
+			ipc.send("finish-login", {
+				name: uname.value,
+				password: password.value,
+				remember: remember.checked,
+				auto: auto.checked
+			});
 			restore_login();
 		} else
 			show_error("获取 bdstoken 失败");
