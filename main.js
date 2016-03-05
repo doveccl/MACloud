@@ -28,7 +28,7 @@ app.on("ready", function() {
 		useContentSize: true
 	});
 	loginWindow.loadURL("file://" + __dirname + "/login.html");
-//	loginWindow.openDevTools();
+	loginWindow.openDevTools();
 	loginWindow.on("closed", function() {
 		if (vcodeWindow != null)
 			vcodeWindow.destroy();

@@ -3,6 +3,7 @@
 	<head>
 		<link href="http://cdn.bootcss.com/material-design-icons/2.2.0/iconfont/material-icons.css" rel="stylesheet">
 		<link href="css/material.min.css" rel="stylesheet">
+		<link href="css/shake.css" rel="stylesheet">
 
 		<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -16,16 +17,12 @@
 				align-items:center;
 				display:-webkit-flex;
 			}
-			#form {
-				margin: 0 auto;
-			}
-			#login {
-				width: 100%;
-			}
-			#error-box {
-				height: 20px;
-				margin-top: 5px;
-			}
+			#form { margin: 0 auto; }
+			#login { width: 100%; }
+			#error-box { height: 20px; margin-top: 5px; }
+			#footer { text-align: center; color: #999; }
+			#error, #footer span { cursor: default; }
+			#footer span { margin: 0 5px; font-size: 10px; }
 		</style>
 	</head>
 	<body>
@@ -56,6 +53,9 @@
 				<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" id="login">登录</button>
 				<div id="error-box">
 					<span id="error" style="display:none;color:red;"></span>
+				</div>
+				<div id="footer">
+					<span>MACloud v1.0.0</span>
 				</div>
 			</div>
 		</div>

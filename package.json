@@ -9,8 +9,8 @@
 		"url": "https://github.com/doveccl/MACloud.git"
 	},
 	"dependencies": {
-		"electron": ">=0.36.9",
-		"node-rsa": ">=0.3.2",
-		"keytar": ">=3.0.0"
+		"electron": "~0.36.9",
+		"node-rsa": "~0.3.2",
+		"keytar": "~3.0.0"
 	}
 }

@@ -57,9 +57,13 @@ function restore_login() {
 	login.innerHTML = "登录";
 }
 function show_error(e) {
-	restore_login();
 	error.innerHTML = e;
 	error.style.display = "block";
+	error.className = "shake";
+	setTimeout(function() {
+		error.className = "";
+		restore_login();
+	}, 500);
 }
 
 login.addEventListener("click", do_login);
@@ -228,10 +232,10 @@ function on_post_login(res) {
 			else if (d.err_no == 6)
 				show_error("验证码错误");
 			else if (d.err_no == 400031 || d.err_no == 120019)
-				show_error("账号存在异常，需要认证，不支持认证登录，请自行检查账号异常");
+				show_error("账号异常，需要认证");
 			else show_error("未知错误");
 		} else
-			show_error("验证密码失败 ...");
+			show_error("验证密码失败");
 	});
 }
 
@@ -250,13 +254,6 @@ function on_get_bdstoken(res) {
 			globals.set("cookies", cookies);
 			globals.set("tokens", tokens);
 			ipc.send("finish-login");
-			var user_data = JSON.stringify({
-				name: uname.value,
-				password: password.value,
-				remember: remember.checked,
-				auto: auto.checked
-			});
-			fs.writeFileSync("user_data", user_data);
 			restore_login();
 		} else
 			show_error("获取 bdstoken 失败");

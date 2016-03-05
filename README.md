@@ -6,8 +6,6 @@ BaiduYun Client for Mac OS
 
 √ Login
 
-× Proxy
-
 × Token & Password store
 
 × List files
