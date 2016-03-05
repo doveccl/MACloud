@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+
+		<link href="http://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+		<style>
+			* {
+				-webkit-user-select:none;
+			}
+			#vcode-img {
+				cursor: pointer;
+				height: auto;
+			}
+			#img-box {
+				height: 70px;
+				margin: 5px 0;
+				text-align: center;
+			}
+		</style>
+
+		<title>请输入验证码</title>
+	</head>
+	<body>
+		<div class="container">
+			<div id="img-box">
+				<img src="img/wait.gif" alt="加载失败，请点击重试" id="vcode-img">
+			</div>
+			<div class="input-group">
+				<input type="text" class="form-control" placeholder="验证码" id="vcode">
+				<span class="input-group-btn">
+					<button class="btn btn-default" type="button" id="submit">确定</button>
+				</span>
+			</div>
+		</div>
+		<script>
+			var fs = require("fs");
+			var ipc = require("electron").ipcRenderer;
+
+			var auth = require("./auth.js");
+			var globals = require("./globals.js");
+
+			var vcode_img = document.querySelector("#vcode-img");
+			var vcode = document.querySelector("#vcode");
+			var submit = document.querySelector("#submit");
+
+			var vcodetype = globals.get("vcodetype");
+			var codeString = globals.get("codeString");
+			var cookies = globals.get("cookies");
+			var tokens = globals.get("tokens");
+
+			var tmpdir = globals.get("tmpdir");
+
+			auth.get_vcode(cookies, codeString, set_image);
+			function set_image(res) {
+				res.setEncoding("binary");
+				var img = new Buffer("");
+				res.on("data", function(d) { img += d; });
+				res.on("end", function() {
+					fs.writeFileSync(tmpdir + "/vcode.jpg", img, "binary");
+					vcode_img.style.display = "none";
+					vcode_img.style.width = "100%";
+					vcode_img.src = tmpdir + "/vcode.jpg";
+					setTimeout(function() {
+						vcode_img.style.display = null;
+					}, 0);
+				});
+			}
+			vcode_img.addEventListener("click", function() {
+				vcode_img.src = "img/wait.gif";
+				vcode_img.style.width = "auto";
+				auth.refresh_vcode(cookies, tokens, vcodetype, refresh_image);
+			});
+			function refresh_image(res) {
+				res.on("data", function(d) {
+					var data = d.toString();
+					data = data.replace(/\'/g, "\"");
+					try {
+						d = JSON.parse(data);
+						globals.set("codeString", d.data.verifyStr);
+						auth.get_vcode(cookies, d.data.verifyStr, set_image);
+					} catch (e) {
+						vcode_img.src = "";
+					}
+				});
+			}
+
+			submit.addEventListener("click", function() {
+				if (vcode.value.match(/^[a-zA-Z0-9]{4}$/g))
+					ipc.send("submit-vcode", vcode.value);
+				else alert("验证码错误");
+			})
+		</script>
+	</body>
+</html>

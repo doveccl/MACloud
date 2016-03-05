@@ -1,0 +1,16 @@
+{
+	"name"    : "MACloud",
+	"version" : "1.0.0",
+	"license": "GPL-3.0",
+	"main"    : "main.js",
+	"description": "BaiduYun Client for Mac OS",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/doveccl/MACloud.git"
+	},
+	"dependencies": {
+		"electron": ">=0.36.9",
+		"node-rsa": ">=0.3.2",
+		"keytar": ">=3.0.0"
+	}
+}

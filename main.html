@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link href="http://cdn.bootcss.com/material-design-icons/2.2.0/iconfont/material-icons.css" rel="stylesheet">
+		<link href="http://cdn.bootcss.com/material-design-lite/1.1.1/material.min.css" rel="stylesheet">
+
+		<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+
+		<title>百度云</title>
+
+		<style>
+			body {
+				padding: 20px;
+			}
+			div {
+				word-wrap: break-word;
+				word-break: break-all;
+			}
+		</style>
+	</head>
+	<body>
+		<div>
+			登陆成功
+		</div>
+
+		Cookies:
+		<div id="cookies"></div>
+		Tokens:
+		<div id="tokens"></div>
+		<script>
+			var globals = require("./globals.js");
+			document.querySelector("#cookies").innerHTML = JSON.stringify(globals.get("cookies"));
+			document.querySelector("#tokens").innerHTML = JSON.stringify(globals.get("tokens"));
+		</script>
+		<script src="http://cdn.bootcss.com/material-design-lite/1.1.1/material.min.js"></script>
+	</body>
+</html>
