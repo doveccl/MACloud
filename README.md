@@ -4,14 +4,14 @@ BaiduYun Client for Mac OS
 
 # Process
 
-<input type="checkbox" checked> Login
+√ Login
 
-<input type="checkbox"> Proxy
+× Proxy
 
-<input type="checkbox"> Token & Password store
+× Token & Password store
 
-<input type="checkbox"> List files
+× List files
 
-<input type="checkbox"> Download & Upload
+× Download & Upload
 
-<input type="checkbox"> Preview & Online player
+× Preview & Online player
