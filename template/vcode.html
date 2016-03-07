@@ -5,20 +5,11 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="utf-8">
 
-		<link href="http://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+		<link href="../css/bootstrap.min.css" rel="stylesheet">
 		<style>
-			* {
-				-webkit-user-select:none;
-			}
-			#vcode-img {
-				cursor: pointer;
-				height: auto;
-			}
-			#img-box {
-				height: 70px;
-				margin: 5px 0;
-				text-align: center;
-			}
+			* { -webkit-user-select:none; }
+			#vcode-img { cursor: pointer; height: auto; }
+			#img-box { height: 70px; margin: 5px 0; text-align: center; }
 		</style>
 
 		<title>请输入验证码</title>
@@ -26,7 +17,7 @@
 	<body>
 		<div class="container">
 			<div id="img-box">
-				<img src="img/wait.gif" alt="加载失败，请点击重试" id="vcode-img">
+				<img src="../img/wait.gif" alt="加载失败，请点击重试" id="vcode-img">
 			</div>
 			<div class="input-group">
 				<input type="text" class="form-control" placeholder="验证码" id="vcode">
@@ -39,8 +30,8 @@
 			var fs = require("fs");
 			var ipc = require("electron").ipcRenderer;
 
-			var auth = require("./auth.js");
-			var globals = require("./globals.js");
+			var auth = require("../scripts/auth.js");
+			var globals = require("../scripts/globals.js");
 
 			var vcode_img = document.querySelector("#vcode-img");
 			var vcode = document.querySelector("#vcode");
@@ -69,9 +60,11 @@
 				});
 			}
 			vcode_img.addEventListener("click", function() {
-				vcode_img.src = "img/wait.gif";
-				vcode_img.style.width = "auto";
-				auth.refresh_vcode(cookies, tokens, vcodetype, refresh_image);
+				if (vcode_img.src.indexOf("wait.gif") == -1) {
+					vcode_img.src = "../img/wait.gif";
+					vcode_img.style.width = "auto";
+					auth.refresh_vcode(cookies, tokens, vcodetype, refresh_image);
+				}
 			});
 			function refresh_image(res) {
 				res.on("data", function(d) {

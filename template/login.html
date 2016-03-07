@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<link href="http://cdn.bootcss.com/material-design-icons/2.2.0/iconfont/material-icons.css" rel="stylesheet">
-		<link href="css/material.min.css" rel="stylesheet">
-		<link href="css/shake.css" rel="stylesheet">
+		<link href="../css/material.min.css" rel="stylesheet">
+		<link href="../css/shake.css" rel="stylesheet">
 
 		<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -23,6 +22,11 @@
 			#footer { text-align: center; color: #999; }
 			#error, #footer span { cursor: default; }
 			#footer span { margin: 0 5px; font-size: 10px; }
+			#error-box.loading {
+				background-image: url(../img/wait.gif);
+				background-repeat: no-repeat;
+				background-position: center;
+			}
 		</style>
 	</head>
 	<body>
@@ -70,7 +74,7 @@
 			var login = document.querySelector("#login");
 			var error = document.querySelector("#error");
 		</script>
-		<script src="login.js"></script>
-		<script src="http://cdn.bootcss.com/material-design-lite/1.1.1/material.min.js"></script>
+		<script src="../scripts/login.js"></script>
+		<script src="../js/material.min.js"></script>
 	</body>
 </html>

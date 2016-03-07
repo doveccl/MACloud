@@ -5,33 +5,41 @@ var BW = require("browser-window");
 var fs = require("fs");
 var keytar = require("keytar");
 
+var urls = {
+	main: "file://" + __dirname + "/template/main.html",
+	login: "file://" + __dirname + "/template/login.html",
+	vcode: "file://" + __dirname + "/template/vcode.html"
+};
+var consts = {
+	name: "MACloud",
+	version : "1.0.0",
+	expire : 3 * 24 * 60 * 60 * 1000, // 3 days in ms
+	pwdfmt: /("password"\s*:\s*")[^"]*(")/g,
+	homedir: require("process").env.HOME
+}
 var globals = {
-	__NAME__: "MACloud",
-	__VERSION__: "1.0.0",
-	__EXP_TIME__: 3 * 24 * 60 * 60 * 1000, // 3 days in ms
-	__PWD_FMT__: /"password"\s*:\s*"[^"]*"/g,
 	tmpdir: require("os").tmpdir(),
-	confdir: require("process").env.HOME + "/.MACloud",
-	confile: require("process").env.HOME + "/.MACloud/config",
+	confdir: consts.homedir + "/.MACloud",
+	confile: consts.homedir + "/.MACloud/config",
 	config: false,
 	cookies: false,
 	tokens: false
 };
-fs.stat(globals["confdir"], function(err, stat) {
+fs.stat(globals.confdir, function(err, stat) {
 	if (err && err.errno == -2)
-		fs.mkdirSync(globals["confdir"]);
+		fs.mkdirSync(globals.confdir);
 
-	fs.readFile(globals["confile"], function(err, data) {
+	fs.readFile(globals.confile, function(err, data) {
 		if (data) { try {
-			globals["config"] = JSON.parse(data);
-			var config = globals["config"];
+			globals.config = JSON.parse(data);
+			var config = globals.config;
 			for (var i in config.users) {
 				var u = config.users[i];
-				u.password = keytar.getPassword("MACloud", u.name);
+				u.password = keytar.getPassword(consts.name, u.name);
 
 				if (u.auth) {
 					var now = new Date().getTime();
-					if (now > u.auth.time + globals["__EXP_TIME__"])
+					if (now > u.auth.time + consts.expire)
 						u.auth = false;
 				}
 			}
@@ -60,8 +68,7 @@ app.on("ready", function() {
 		resizable: false,
 		useContentSize: true
 	});
-	loginWindow.loadURL("file://" + __dirname + "/login.html");
-//	loginWindow.openDevTools();
+	loginWindow.loadURL(urls.login);
 	loginWindow.on("closed", function() {
 		if (vcodeWindow != null)
 			vcodeWindow.destroy();
@@ -88,41 +95,41 @@ ipc.on("get-vcode", function(event, way) {
 		vcodeWindow.destroy();
 	});
 
-	vcodeWindow.loadURL("file://" + __dirname + "/vcode.html");
+	vcodeWindow.loadURL(urls.vcode);
 });
 
 ipc.on("finish-login", function(event, user) {
 	loginWindow.hide();
 
-	if (!globals["config"])
-		globals["config"] = {};
-	if (!globals["config"].users)
-		globals["config"].users = {};
-	user.auth = {
+	if (!globals.config)
+		globals.config = {};
+	if (!globals.config.users)
+		globals.config.users = {};
+	user.auth = user.remember ? {
 		time: new Date().getTime(),
-		cookies: globals["cookies"],
-		tokens: globals["tokens"]
-	};
-	if (!globals["config"].default || user.auto)
-		globals["config"].default = user.name;
-	globals["config"].users[user.name] = user;
+		cookies: globals.cookies,
+		tokens: globals.tokens
+	} : false;
+	if (!globals.config.default || user.auto)
+		globals.config.default = user.name;
+	globals.config.users[user.name] = user;
 
-	if (keytar.getPassword(globals["__NAME__"], user.name) == null)
-		keytar.addPassword(globals["__NAME__"], user.name, user.password);
+	if (keytar.getPassword(consts.name, user.name) == null)
+		keytar.addPassword(consts.name, user.name, user.password);
 	else
-		keytar.replacePassword(globals["__NAME__"], user.name, user.password);
+		keytar.replacePassword(consts.name, user.name, user.password);
 
-	var c_s = JSON.stringify(globals["config"]);
-	c_s = c_s.replace(globals["__PWD_FMT__"], "\"password\":\"\"");
-	fs.writeFileSync(globals["confile"], c_s);
+	var conf_str = JSON.stringify(globals.config);
+	conf_str = conf_str.replace(consts.pwdfmt, "$1$2");
+	fs.writeFileSync(globals.confile, conf_str);
 
 	mainWindow = new BW({
 		width: 800,
 		height: 600,
 		useContentSize: true
 	});
-	
-	mainWindow.loadURL("file://" + __dirname + "/main.html");
+
+	mainWindow.loadURL(urls.main);
 	mainWindow.on("closed", function() {
 		app.quit();
 	});
