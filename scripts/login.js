@@ -161,7 +161,6 @@ function on_test_finish(res) {
 
 ipc.on("vcode-reply", function(event, res) {
 	vcode = res.vcode;
-	console.log(vcode);
 	codeString = globals.get("codeString");
 	if (res.way == "check-login") {
 		update_status("获取公钥 ...");
@@ -310,7 +309,6 @@ function on_get_bdstoken(res) {
 	res.on("data", function(d) {
 		data += d;
 	}).on("end", function() {
-		tokens["bdstoken"] = "";
 		data = data.match(/"bdstoken"\s*:\s*"([^"]+)"/);
 		if (data) {
 			data = data[0];
