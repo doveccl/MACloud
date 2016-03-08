@@ -121,7 +121,7 @@ function do_login() {
 	error.style.display = "none";
 	login.disabled = true;
 
-	if (conf.users[uname.value])
+	if (conf.users && conf.users[uname.value])
 		if (conf.users[uname.value].auth) {
 			var me = conf.users[uname.value];
 			update_status("验证 Cookies ...");
@@ -279,7 +279,6 @@ function on_post_login(res) {
 	res.on("data", function(d) {
 		data += d;
 	}).on("end", function() {
-		
 		var d = data.match(/"(err_no[^"]+)"/);
 		if (d = d[0]) {
 			d = d.replace(/^"(err_no[^"]+)"$/, "$1");

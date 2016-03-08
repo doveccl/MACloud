@@ -57,6 +57,10 @@ ipc.on("get-globals", function(event, key) {
 		event.returnValue = globals[key];
 });
 
+ipc.on("debug", function(event, log) {
+	console.log(log);
+});
+
 var loginWindow = null;
 var vcodeWindow = null;
 var mainWindow = null;
