@@ -81,9 +81,10 @@
 			}
 
 			submit.addEventListener("click", function() {
-				if (vcode.value.match(/^[a-zA-Z0-9]{4}$/g))
+				if (vcode.value.match(/^[a-zA-Z0-9]{4}$/g)) {
+					submit.disabled = true;
 					ipc.send("submit-vcode", vcode.value);
-				else alert("验证码错误");
+				} else alert("验证码错误");
 			})
 		</script>
 	</body>

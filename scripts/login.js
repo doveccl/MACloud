@@ -7,6 +7,7 @@ var globals = require("../scripts/globals.js");
 
 var user_name, user_password;
 var cookies = {}, tokens = {};
+var pwd_enc, rsakey;
 var vcode = "", codeString, vcodetype;
 
 function add_cookie(cookie) {
@@ -162,6 +163,7 @@ function on_test_finish(res) {
 ipc.on("vcode-reply", function(event, res) {
 	vcode = res.vcode;
 	codeString = globals.get("codeString");
+
 	if (res.way == "check-login") {
 		update_status("获取公钥 ...");
 		auth.get_public_key(cookies, tokens, on_get_key);
@@ -169,7 +171,7 @@ ipc.on("vcode-reply", function(event, res) {
 		auth.post_login(
 			cookies, tokens,
 			user_name, pwd_enc,
-			d.key, vcode, codeString,
+			rsakey, vcode, codeString,
 		on_post_login);
 	}
 });
@@ -256,12 +258,13 @@ function on_get_key(res) {
 			var key = new NodeRsa(pubkey, {
 				encryptionScheme: "pkcs1"
 			});
-			var pwd_enc = key.encrypt(user_password, "base64");
+			rsakey = d.key;
+			pwd_enc = key.encrypt(user_password, "base64");
 			update_status("验证密码 ...");
 			auth.post_login(
 				cookies, tokens,
 				user_name, pwd_enc,
-				d.key, vcode, codeString,
+				rsakey, vcode, codeString,
 			on_post_login);
 		} else
 			show_error("获取公钥失败");
