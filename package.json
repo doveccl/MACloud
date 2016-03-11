@@ -2,7 +2,7 @@
 	"name": "MACloud",
 	"version": "1.0.0",
 	"license": "GPL-3.0",
-	"main": "main.js",
+	"main": "app.js",
 	"description": "BaiduYun Client for Mac OS",
 	"repository": {
 		"type": "git",

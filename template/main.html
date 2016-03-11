@@ -1,35 +1,110 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<link href="http://cdn.bootcss.com/material-design-icons/2.2.0/iconfont/material-icons.css" rel="stylesheet">
+		<link href="../css/material-icons.css" rel="stylesheet">
 		<link href="../css/material.min.css" rel="stylesheet">
+		<link href="../css/main.css" rel="stylesheet">
 
 		<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="utf-8">
 
-		<title>百度云</title>
-
-		<style>
-			div {
-				padding: 20px;
-				word-wrap: break-word;
-				word-break: break-all;
-			}
-		</style>
+		<title>MACloud</title>
 	</head>
 	<body>
-		<div>登陆成功</div>
+		<div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+			<header class="mdl-layout__header">
+				<div class="mdl-layout__header-row">
+					<div class="mdl-layout-spacer" id="title">所有文件</div>
+					<div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable
+								mdl-textfield--floating-label mdl-textfield--align-right">
+						<label class="mdl-button mdl-js-button mdl-button--icon" for="search">
+							<i class="material-icons">search</i>
+						</label>
+						<div class="mdl-textfield__expandable-holder">
+							<input class="mdl-textfield__input" type="text" id="search">
+						</div>
+					</div>
+				</div>
+			</header>
+			<div class="mdl-layout__drawer mdl-color--blue-grey-900
+						mdl-color-text--blue-grey-50">
+				<span class="mdl-layout-title" id="info-head">
+					<div id="info-box">
+						<img id="avatar">
+						<div id="user-action">
+							<span id="uname"></span>
+							<div class="mdl-layout-spacer"></div>
+							<button class="mdl-button mdl-js-button
+											mdl-button--icon" id="user-drop">
+								<i class="material-icons">arrow_drop_down</i>
+							</button>
+							<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu
+										mdl-js-ripple-effect" for="user-drop">
+								<li class="mdl-menu__item" id="logout">切换账号</li>
+								<li class="mdl-menu__item" id="exit">退出程序</li>
+							</ul>
+						</div>
+					</div>
+					<div id="quota-box">
+						<div id="quota" class="mdl-progress mdl-js-progress"></div>
+						<div id="quota-info">
+							<span id="used"></span>
+							<span>&#47;</span>
+							<span id="total"></span>
+						</div>
+					</div>
+				</span>
+				<nav class="mdl-navigation mdl-color--blue-grey-800
+							mdl-color-text--blue-grey-400">
+					<a class="mdl-navigation__link" href="">
+						<i class="material-icons">sim_card</i>
+						全部文件
+					</a>
+					<a class="mdl-navigation__link">
+						<i class="material-icons">photo</i>
+						图片
+					</a>
+					<a class="mdl-navigation__link">文档</a>
+					<a class="mdl-navigation__link">视频</a>
+					<a class="mdl-navigation__link">种子</a>
+					<a class="mdl-navigation__link">音乐</a>
+					<a class="mdl-navigation__link">其他</a>
+				</nav>
+			</div>
+			<main class="mdl-layout__content">
+				<div class="page-content"><!-- Your content goes here --></div>
+			</main>
+		</div>
 
-		<div>Cookies:</div>
-		<div id="cookies"></div>
-		<div>Tokens:</div>
-		<div id="tokens"></div>
+		<dialog class="mdl-dialog" id="err-dlg">
+			<h4 class="mdl-dialog__title">请求出错</h4>
+			<div class="mdl-dialog__content" id="error"></div>
+			<div class="mdl-dialog__actions">
+				<button type="button" class="mdl-button close">确定</button>
+			</div>
+		</dialog>
+
 		<script>
-			var globals = require("../scripts/globals.js");
-			document.querySelector("#cookies").innerHTML = JSON.stringify(globals.get("cookies"));
-			document.querySelector("#tokens").innerHTML = JSON.stringify(globals.get("tokens"));
+			var err_dlg = document.querySelector("#err-dlg");
+			var error = document.querySelector("#error");
+
+			var logout = document.querySelector("#logout");
+			var quit = document.querySelector("#exit");
+
+			var avatar = document.querySelector("#avatar");
+			var uname = document.querySelector("#uname");
+
+			var quota = document.querySelector("#quota");
+			var used = document.querySelector("#used");
+			var total = document.querySelector("#total");
+
+			err_dlg.querySelector(".close")
+			.addEventListener('click', function() {
+				err_dlg.close();
+			});
 		</script>
+		<script src="../scripts/main.js"></script>
 		<script src="../js/material.min.js"></script>
 	</body>
 </html>

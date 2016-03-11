@@ -251,7 +251,6 @@ function on_get_key(res) {
 	res.on("data", function(d) {
 		data += d;
 	}).on("end", function() {
-		data = data.toString();
 		data = data.replace(/\'/g, "\"");
 		var d = JSON.parse(data), pubkey;
 		if (pubkey = d.pubkey) {

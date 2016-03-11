@@ -191,7 +191,7 @@ exports.post_login = function(cok, tkn, nam, pwd, key, vcd, cds, callback) {
 		path: "/v2/api/?login",
 		method: "POST",
 		headers: {
-			Cookie: cookies_stringify(cookies, [
+			Cookie: cookies_stringify(cok, [
 				"BAIDUID","HOSUPPORT", "UBI"
 			]),
 			Accept: ACCEPT_HTML,
@@ -214,8 +214,7 @@ exports.get_bdstoken = function(cookies, callback) {
 		path: "/disk/home",
 		headers: {
 			Cookie: cookies_stringify(cookies),
-			Referer: "http://pan.baidu.com/disk/home",
-			"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36"
+			Referer: "http://pan.baidu.com/disk/home"
 		}
 	};
 	http.get(options, callback).on("error", function(e) {
@@ -228,7 +227,8 @@ exports.test_cookies = function(user, callback) {
 		hostname: "passport.baidu.com",
 		headers: {
 			Cookie: cookies_stringify(user.auth.cookies),
-			Referer: "https://passport.baidu.com/"
+			Referer: "https://passport.baidu.com/",
+			"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11) AppleWebKit/500 (KHTML, like Gecko) Chrome/48.0 Safari/500"
 		}
 	};
 	https.get(options, callback).on("error", function(e) {

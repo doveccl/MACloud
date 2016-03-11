@@ -134,9 +134,17 @@ ipc.on("finish-login", function(event, user) {
 	});
 
 	mainWindow.loadURL(urls.main);
-	mainWindow.on("closed", function() {
-		app.quit();
-	});
+	mainWindow.openDevTools();
+});
+
+ipc.on("logout", function(event) {
+	if (mainWindow.isVisible())
+		mainWindow.destroy();
+	loginWindow.show();
+});
+
+ipc.on("exit", function(event) {
+	app.quit();
 });
 
 app.on("window-all-closed", function() {

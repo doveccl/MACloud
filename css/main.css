@@ -1,0 +1,49 @@
+* {
+	-webkit-user-select: none;
+}
+
+.mdl-layout__drawer {
+	border-right: 0;
+}
+
+.mdl-navigation__link .material-icons {
+    font-size: 24px;
+    margin-right: 24px;
+}
+
+#info-head {
+	padding: 30px;
+}
+
+#user-action {
+	margin: 10px 0;
+	height: 32px;
+	line-height: 32px;
+	font-size: .8em;
+	display: flex;
+}
+#user-action .mdl-menu__container {
+	margin-right: 10px;
+}
+#avatar {
+	width: 60px;
+	height: 60px;
+	border-radius: 30px;
+}
+
+
+#quota-box {
+	margin: 10px 0;
+	line-height: normal;
+	font-size: .6em;
+}
+#quota-info {
+	margin: 10px 0;
+}
+
+#err-dlg .mdl-dialog__title {
+	font-size: 1.5em;
+}
+#error {
+	color: red;
+}
