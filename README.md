@@ -4,12 +4,16 @@ BaiduYun Client for Mac OS
 
 # Process
 
-√ Login
+- [x] Login
 
-√ Token & Password store
 
-× List files
+- [x] Token & Password store
 
-× Download & Upload
 
-× Preview & Online player
+- [ ] List files
+
+
+- [ ] Download & Upload
+
+
+- [ ] Preview & Online player

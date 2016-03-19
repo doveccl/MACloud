@@ -35,7 +35,7 @@ exports.get_quota = function(cookies, callback) {
 	http.get(options, callback).on("error", function(e) {
 		show_error(e.message);
 	});
-}
+};
 
 exports.get_uk = function(cookies, callback) {
 	var options = {
@@ -49,7 +49,7 @@ exports.get_uk = function(cookies, callback) {
 	http.get(options, callback).on("error", function(e) {
 		show_error(e.message);
 	});
-}
+};
 
 exports.get_user_info = function(tokens, uk, callback) {
 	var data = {
@@ -71,4 +71,34 @@ exports.get_user_info = function(tokens, uk, callback) {
 	http.get(options, callback).on("error", function(e) {
 		show_error(e.message);
 	});
-}
+};
+
+exports.get_dirs = function(cookies, tokens, path, callback, page, num) {
+	if (typeof page == "undefined")
+		page = 1;
+	if (typeof num == "undefined")
+		num = 100;
+	var data = {
+		channel: "chunlei",
+		clienttype: 0, web: 1,
+		bdstoken: tokens.bdstoken,
+		num: num, page: page, dir: path,
+		order: "time", desc: 1,
+		t: new Date().getTime(),
+		_: new Date().getTime()
+	};
+	var options = {
+		hostname: "pan.baidu.com",
+		path: "/api/list?" + qs.stringify(data),
+		headers: {
+			Cookie: cookies_stringify(cookies, [
+				"BAIDUID", "BDUSS", "PANWEB", "cflag"
+			]),
+			Referer: "http://pan.baidu.com/disk/home",
+			"User-Agent": USER_AGENT
+		}
+	};
+	http.get(options, callback).on("error", function(e) {
+		show_error(e.message);
+	});
+};

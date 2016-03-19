@@ -2,6 +2,27 @@
 	-webkit-user-select: none;
 }
 
+html {
+	overflow: auto;
+}
+
+#files {
+	margin: 0 1em 1em 0;
+}
+#files > div {
+	width: 80px;
+	height: 100px;
+	margin: 1em 0 0 1em;
+	padding: 0;
+	float: left;
+}
+.dir {
+	background-color: blue;
+}
+.file {
+	background-color: red;
+}
+
 .mdl-layout__drawer {
 	border-right: 0;
 }
@@ -9,6 +30,10 @@
 .mdl-navigation__link .material-icons {
     font-size: 24px;
     margin-right: 24px;
+}
+
+.mdl-navigation__link.active {
+	background-color: #666;
 }
 
 #info-head {
@@ -31,7 +56,6 @@
 	border-radius: 30px;
 }
 
-
 #quota-box {
 	margin: 10px 0;
 	line-height: normal;
@@ -41,9 +65,30 @@
 	margin: 10px 0;
 }
 
+#cata-nav a {
+	color: #CCC;
+}
+#cata-nav a:hover {
+	color: #666;
+}
+
 #err-dlg .mdl-dialog__title {
 	font-size: 1.5em;
 }
 #error {
 	color: red;
+}
+
+::-webkit-scrollbar {
+	width: 8px;
+}
+::-webkit-scrollbar-track {
+	width: 8px;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb {
+	width: 8px;
+    border-radius: 4px;
+    background: #CCC;
+    box-shadow: inset #999 0 0 6px;
 }

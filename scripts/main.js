@@ -25,7 +25,15 @@ function show_error(str) {
 	err_dlg.showModal();
 }
 
+function add_file(type, name) {
+	var file = document.createElement("div");
+	file.className = type;
+	file.innerHTML = name;
+	files.appendChild(file);
+}
+
 pcs.get_quota(cookies, on_get_quota);
+pcs.get_dirs(cookies, tokens, "/", on_get_dirs);
 pcs.get_uk(cookies, on_get_uk);
 
 function on_get_quota(res) {
@@ -72,5 +80,27 @@ function on_get_user_info(res) {
 			uname.innerHTML = data.uname;
 			avatar.src = data.avatar_url;
 		}
+	});
+}
+
+function on_get_dirs(res) {
+	var data = "", list, type;
+	res.on("data", function(d) {
+		data += d;
+	}).on("end", function() {
+		data = JSON.parse(data);
+		console.log(data);
+		if (data.errno == 0) {
+			list = data.list;
+			for (var i = 0; i < list.length; i++) {
+				if (list[i].isdir)
+					type = "dir";
+				else {
+					type = "file";
+				}
+				add_file(type, list[i].server_filename);
+			}
+		} else
+			show_error("获取文件列表失败");
 	});
 }

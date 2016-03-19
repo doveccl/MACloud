@@ -15,7 +15,8 @@
 		<div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
 			<header class="mdl-layout__header">
 				<div class="mdl-layout__header-row">
-					<div class="mdl-layout-spacer" id="title">所有文件</div>
+					<div id="title">所有文件</div>
+					<div class="mdl-layout-spacer"></div>
 					<div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable
 								mdl-textfield--floating-label mdl-textfield--align-right">
 						<label class="mdl-button mdl-js-button mdl-button--icon" for="search">
@@ -25,11 +26,21 @@
 							<input class="mdl-textfield__input" type="text" id="search">
 						</div>
 					</div>
+					<i class="material-icons"></i>
+					<button class="mdl-button mdl-js-button
+									mdl-button--icon" id="top-action">
+						<i class="material-icons">more_vert</i>
+					</button>
+					<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu
+								mdl-js-ripple-effect" for="top-action">
+						<li class="mdl-menu__item">上传 / 下载 列表</li>
+						<li class="mdl-menu__item">回收站</li>
+					</ul>
 				</div>
 			</header>
-			<div class="mdl-layout__drawer mdl-color--blue-grey-900
-						mdl-color-text--blue-grey-50">
-				<span class="mdl-layout-title" id="info-head">
+			<div class="mdl-layout__drawer mdl-color--blue-grey-800">
+				<span class="mdl-layout-title mdl-color--blue-grey-900
+							mdl-color-text--blue-grey-50" id="info-head">
 					<div id="info-box">
 						<img id="avatar">
 						<div id="user-action">
@@ -55,25 +66,32 @@
 						</div>
 					</div>
 				</span>
-				<nav class="mdl-navigation mdl-color--blue-grey-800
-							mdl-color-text--blue-grey-400">
-					<a class="mdl-navigation__link" href="">
-						<i class="material-icons">sim_card</i>
-						全部文件
+				<nav class="mdl-navigation" id="cata-nav">
+					<a class="mdl-navigation__link active" href="">
+						<i class="material-icons">laptop_mac</i>全部文件
 					</a>
 					<a class="mdl-navigation__link">
-						<i class="material-icons">photo</i>
-						图片
+						<i class="material-icons">photo</i>图片
 					</a>
-					<a class="mdl-navigation__link">文档</a>
-					<a class="mdl-navigation__link">视频</a>
-					<a class="mdl-navigation__link">种子</a>
-					<a class="mdl-navigation__link">音乐</a>
-					<a class="mdl-navigation__link">其他</a>
+					<a class="mdl-navigation__link">
+						<i class="material-icons">description</i>文档
+					</a>
+					<a class="mdl-navigation__link">
+						<i class="material-icons">movie</i>视频
+					</a>
+					<a class="mdl-navigation__link">
+						<i class="material-icons">link</i>种子
+					</a>
+					<a class="mdl-navigation__link">
+						<i class="material-icons">music_note</i>音乐
+					</a>
+					<a class="mdl-navigation__link">
+						<i class="material-icons">more_horiz</i>其他
+					</a>
 				</nav>
 			</div>
 			<main class="mdl-layout__content">
-				<div class="page-content"><!-- Your content goes here --></div>
+				<div class="page-content" id="files"></div>
 			</main>
 		</div>
 
@@ -98,6 +116,8 @@
 			var quota = document.querySelector("#quota");
 			var used = document.querySelector("#used");
 			var total = document.querySelector("#total");
+
+			var files = document.querySelector("#files");
 
 			err_dlg.querySelector(".close")
 			.addEventListener('click', function() {
