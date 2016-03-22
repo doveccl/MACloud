@@ -135,6 +135,8 @@ ipc.on("finish-login", function(event, user) {
 
 	mainWindow.loadURL(urls.main);
 	mainWindow.openDevTools();
+
+	console.log(mainWindow.getBounds());
 });
 
 ipc.on("logout", function(event) {

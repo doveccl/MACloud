@@ -3,24 +3,90 @@
 }
 
 html {
-	overflow: auto;
+	overflow: hidden;
 }
 
+#title {
+	padding-bottom: 2px;
+}
+#title a, #title b {
+	text-decoration: none;
+	margin: 0 3px;
+	font-size: 16px;
+	line-height: 16px;
+	color: #FFF;
+}
+#title b {
+	color: #CCC;
+}
+
+#fbox {
+	padding: 0;
+	position: absolute;
+	top: 0; bottom: 0;
+	left: 0; right: 0;
+}
+#fbox.loading {
+	background-image: url(../img/wait.gif);
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+#fbox.empty {
+	background-image: url(../img/empty.png);
+	background-position: center center;
+	background-size: 50% 50%;
+	background-repeat: no-repeat;
+}
 #files {
-	margin: 0 1em 1em 0;
+	overflow: hidden;
+	min-height: 100%;
 }
 #files > div {
 	width: 80px;
-	height: 100px;
 	margin: 1em 0 0 1em;
-	padding: 0;
+	padding: 5px;
 	float: left;
+	color: #666;
+	transition: all 400ms;
 }
-.dir {
-	background-color: blue;
+#files > div:hover {
+	background-color: #DDD;
 }
-.file {
-	background-color: red;
+#files > div.selected {
+	background-color: #AAA;
+	color: #FFF;
+}
+.fname {
+	text-align: center;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-size: 12px;
+	line-height: 14px;
+	height: 28px;
+	padding: 0;
+}
+.ico {
+	width: 80px;
+	height: 80px;
+	line-height: 80px;
+	background-size: 70px 70px;
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-image: url(../img/type/file.png);
+}
+.ico.loading {
+	background-size: unset;
+	background-image: url(../img/wait.gif);
+}
+.ico .thumbs {
+	width: 70px;
+	height: auto;
+	max-height: 70px;
+	padding: 5px;
+	vertical-align: center;
+}
+.ico.dir {
+	background-image: url(../img/type/folder.png);
 }
 
 .mdl-layout__drawer {

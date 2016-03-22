@@ -10,7 +10,7 @@ BaiduYun Client for Mac OS
 - [x] Token & Password store
 
 
-- [ ] List files
+- [x] List files
 
 
 - [ ] Download & Upload

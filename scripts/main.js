@@ -5,6 +5,7 @@ var globals = require("../scripts/globals.js");
 
 var cookies = globals.get("cookies");
 var tokens = globals.get("tokens");
+var file_list = {};
 var uk;
 
 var SIZE = [
@@ -20,21 +21,124 @@ quit.addEventListener("click", function() {
 	ipc.send("exit");
 });
 
+function timestamp(inc) {
+	if (typeof inc != "number")
+		inc = 0;
+	return new Date().getTime() + inc;
+}
+function str_time(ts) {
+	var date = new Date(ts);
+	Y = date.getFullYear() + '-';
+	M = date.getMonth() + '-';
+	D = date.getDate() + ' ';
+	h = date.getHours() + ':';
+	m = date.getMinutes() + ':';
+	s = date.getSeconds(); 
+	return Y + M + D + h + m + s;
+}
+
+
 function show_error(str) {
 	error.innerHTML = str;
 	err_dlg.showModal();
 }
 
-function add_file(type, name) {
+function add_file(f) {
+	var name = f.server_filename;
+	var type = name.replace(/([^.]*\.)*([^.]+)$/g, "$2");
+	if (f.isdir) type = "dir";
+
 	var file = document.createElement("div");
-	file.className = type;
-	file.innerHTML = name;
+	var ico = document.createElement("div");
+	var thumbs = document.createElement("img");
+	var fname = document.createElement("div");
+
+	ico.className = "ico " + type;
+	thumbs.className = "thumbs";
+	fname.className = "fname";
+	fname.innerHTML = name;
+
+	if (f.thumbs && f.thumbs.icon) {
+		thumbs.src = f.thumbs.icon;
+		ico.className += " loading";
+		ico.appendChild(thumbs);
+	}
+
+	file.title = "名称：" + f.server_filename + "\n" +
+		"创建时间：" + str_time(f.server_ctime * 1000) + "\n" +
+		"修改时间：" + str_time(f.server_mtime * 1000);
+
+	file.appendChild(ico);
+	file.appendChild(fname);
 	files.appendChild(file);
+
+	file.addEventListener("click", function(e) {
+		if (file.className != "selected") {
+			var ss = document.querySelectorAll(".selected");
+			for (var i in ss) ss[i].className = "";
+			file.className = "selected";
+		} else if (type == "dir" && timestamp(-500) <= file.getAttribute("ctime"))
+			get_files(f.path);
+		file.setAttribute("ctime", timestamp());
+		e.stopPropagation();
+	});
 }
 
+function get_files(path) {
+	file_list.path = path;
+	file_list.page = 1;
+	file_list.data = [];
+	fbox.className = "loading";
+	files.innerHTML = "";
+	show_path(path);
+	pcs.get_dirs(cookies, tokens, path, on_get_dirs);
+}
+function show_path(path) {
+	if (path == "/") path = "";
+	var p = (" " + path).split("/"), a;
+	var index = [], len = p.length;
+	a = document.createElement("a");
+	a.href = "javascript:get_files('/');";
+	a.innerHTML = "所有文件";
+	index.push(a.outerHTML);
+	if (len > 3) {
+		a.removeAttribute("href");
+		a.innerHTML = "...";
+		index.push(a.outerHTML);
+		p[0] = path.replace(/\/[^/]+$/g, "");
+		p[0] = p[0].replace(/\/[^/]+$/g, "");
+		p[1] = p[len - 2];
+		p[2] = p[len - 1];
+		len = 3;
+	} else p[0] = "";
+	for (var i = 1; i < len; i++) {
+		p[0] += "/" + p[i];
+		a.innerHTML = p[i];
+		if (i + 1 == len)
+			a.removeAttribute("href");
+		else
+			a.href = "javascript:get_files('" + p[0] + "');";
+		index.push(a.outerHTML);
+	}
+
+	title.innerHTML = index.join("<b>&gt;</b>");
+}
+function show_files() {
+	fbox.className = "";
+	if (file_list.data.length == 0)
+		fbox.className = "empty";
+	for (var i in file_list.data)
+		add_file(file_list.data[i]);
+}
+
+files.addEventListener("click", function() {
+	var ss = document.querySelectorAll(".selected");
+	for (var i in ss) ss[i].className = "";
+});
+
 pcs.get_quota(cookies, on_get_quota);
-pcs.get_dirs(cookies, tokens, "/", on_get_dirs);
 pcs.get_uk(cookies, on_get_uk);
+get_files("/");
 
 function on_get_quota(res) {
 	var data = "";
@@ -84,22 +188,20 @@ function on_get_user_info(res) {
 }
 
 function on_get_dirs(res) {
-	var data = "", list, type;
+	var data = "", type;
 	res.on("data", function(d) {
 		data += d;
 	}).on("end", function() {
 		data = JSON.parse(data);
-		console.log(data);
 		if (data.errno == 0) {
-			list = data.list;
-			for (var i = 0; i < list.length; i++) {
-				if (list[i].isdir)
-					type = "dir";
-				else {
-					type = "file";
-				}
-				add_file(type, list[i].server_filename);
-			}
+			file_list.data = file_list.data.concat(data.list);
+			if (data.list.length < 100)
+				show_files();
+			else
+				pcs.get_dirs(
+					cookies, tokens, file_list.path,
+					on_get_dirs, ++file_list.page
+				);
 		} else
 			show_error("获取文件列表失败");
 	});

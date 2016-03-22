@@ -15,7 +15,7 @@
 		<div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
 			<header class="mdl-layout__header">
 				<div class="mdl-layout__header-row">
-					<div id="title">所有文件</div>
+					<div id="title"></div>
 					<div class="mdl-layout-spacer"></div>
 					<div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable
 								mdl-textfield--floating-label mdl-textfield--align-right">
@@ -91,7 +91,9 @@
 				</nav>
 			</div>
 			<main class="mdl-layout__content">
-				<div class="page-content" id="files"></div>
+				<div class="page-content">
+					<div id="fbox"><div id="files"></div></div>
+				</div>
 			</main>
 		</div>
 
@@ -117,6 +119,8 @@
 			var used = document.querySelector("#used");
 			var total = document.querySelector("#total");
 
+			var title = document.querySelector("#title");
+			var fbox = document.querySelector("#fbox");
 			var files = document.querySelector("#files");
 
 			err_dlg.querySelector(".close")
