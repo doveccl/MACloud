@@ -40,6 +40,7 @@ html {
 #files {
 	overflow: hidden;
 	min-height: 100%;
+	position: relative;
 }
 #files > div {
 	width: 80px;
@@ -100,6 +101,16 @@ html {
 
 .mdl-navigation__link.active {
 	background-color: #666;
+}
+
+#cover, #cover:hover {
+	margin: 0  !important;
+	padding: 0  !important;
+	background-color: rgba(0, 0, 0, 0.3) !important;
+	border: rgba(0, 0, 0, 0.4) 1px solid;
+	transition: all 0ms !important;
+	position: absolute;
+	z-index: 10;
 }
 
 #info-head {

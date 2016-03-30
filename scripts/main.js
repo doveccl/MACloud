@@ -3,6 +3,8 @@ var ipc = require("electron").ipcRenderer;
 var pcs = require("../scripts/pcs.js");
 var globals = require("../scripts/globals.js");
 
+var shift = false;
+
 var cookies = globals.get("cookies");
 var tokens = globals.get("tokens");
 var file_list = {};
@@ -19,6 +21,42 @@ logout.addEventListener("click", function() {
 });
 quit.addEventListener("click", function() {
 	ipc.send("exit");
+});
+
+var cover = null;
+files.addEventListener("mousedown", function(e) {
+	if (cover && cover.outerHTML)
+		cover.outerHTML = "";
+	cover = document.createElement("div");
+	cover.id = "cover";
+	cover.style.width = 0;
+	cover.style.height = 0;
+	cover.style.left = e.offsetX + "px";
+	cover.style.top = e.offsetY + "px";
+	cover.dataset.x = e.offsetX;
+	cover.dataset.y = e.offsetY;
+	files.appendChild(cover);
+});
+files.addEventListener("mousemove", function(e) {
+	if (cover == null) return ;
+	var rect = files.getBoundingClientRect();
+	var _x = e.clientX - rect.left;
+	var _y = e.clientY - rect.top;
+	var x = parseInt(cover.dataset.x);
+	var y = parseInt(cover.dataset.y);
+	cover.style.width = Math.abs(x - _x) + "px";
+	cover.style.height = Math.abs(y - _y) + "px";
+	cover.style.left = Math.min(x, _x) + "px";
+	cover.style.top = Math.min(y, _y) + "px";
+});
+document.body.addEventListener("mouseup", function(e) {
+	if (cover && cover.outerHTML)
+		cover.outerHTML = "";
+	cover = null;
+	if (e.shiftKey == false) {
+		var ss = document.querySelectorAll(".selected");
+		for (var i in ss) ss[i].className = "";
+	}
 });
 
 function timestamp(inc) {
@@ -39,6 +77,7 @@ function str_time(ts) {
 
 
 function show_error(str) {
+	files.className = "";
 	error.innerHTML = str;
 	err_dlg.showModal();
 }
@@ -74,17 +113,31 @@ function add_file(f) {
 
 	file.addEventListener("click", function(e) {
 		if (file.className != "selected") {
-			var ss = document.querySelectorAll(".selected");
-			for (var i in ss) ss[i].className = "";
+			if (e.shiftKey == false) {
+				var ss = document.querySelectorAll(".selected");
+				for (var i in ss) ss[i].className = "";
+			}
 			file.className = "selected";
-		} else if (type == "dir" && timestamp(-500) <= file.getAttribute("ctime"))
-			get_files(f.path);
-		file.setAttribute("ctime", timestamp());
+		} else {
+			if (type == "dir" && timestamp(-500) <= file.dataset.ctime)
+				get_files(f.path);
+			if (e.shiftKey)
+				file.className = "";
+		}
+		file.dataset.ctime = timestamp();
+		e.stopPropagation();
+	});
+	file.addEventListener("mousedown", function(e) {
+		e.stopPropagation();
+	});
+	file.addEventListener("mouseup", function(e) {
 		e.stopPropagation();
 	});
 }
 
 function get_files(path) {
+	if (fbox.className == "loading")
+		return ;
 	file_list.path = path;
 	file_list.page = 1;
 	file_list.data = [];
@@ -130,11 +183,6 @@ function show_files() {
 	for (var i in file_list.data)
 		add_file(file_list.data[i]);
 }
-
-files.addEventListener("click", function() {
-	var ss = document.querySelectorAll(".selected");
-	for (var i in ss) ss[i].className = "";
-});
 
 pcs.get_quota(cookies, on_get_quota);
 pcs.get_uk(cookies, on_get_uk);
